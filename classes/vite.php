@@ -46,8 +46,11 @@ class Vite {
         }
 
         // Check if production mode specified
-        if (isset($options['production']) && ($production = $options['production'])) {
-            // Use static, rather than attempting to connect to Vite
+        if (isset($options['production'])) {
+            // In production mode, do not attempt to connect to Vite
+            $vite->running = !$options['production'];
+        } else if (\Fuel::$env === 'production') {
+            // Disable Vite by default, when environment suggests production mode
             $vite->running = false;
         }
 
