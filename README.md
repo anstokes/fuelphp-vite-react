@@ -10,6 +10,17 @@ This is a basic starter kit, allowing the use of React modules in FuelPHP projec
 
 ## Installation
 
+If it is not already present, add the `composer.anstech.co.uk` repository to your composer.json file:
+
+```json
+...
+"repositories": [{
+  "type": "composer",
+  "url": "https://composer.anstech.co.uk/"
+}],
+...
+```
+
 Use composer to add the Vite dependency to your project:
 
 ```console
