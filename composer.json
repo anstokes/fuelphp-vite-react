@@ -2,7 +2,7 @@
 	"name": "fuel/vite",
 	"description" : "FuelPHP 1.x Vite Package",
 	"type": "fuel-package",
-	"homepage": "https://anstech.co.uk",
+	"homepage": "https://github.com/anstokes/fuelphp-vite-react",
 	"license": "MIT",
 	"authors": [
 		{
@@ -11,7 +11,7 @@
 		}
 	],
 	"require": {
-		"php": ">=5.4",
+		"php": ">=7.2",
 		"composer/installers": "~1.0"
 	}
 }
