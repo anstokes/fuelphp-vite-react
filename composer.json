@@ -1,5 +1,5 @@
 {
-	"name": "fuel/vite",
+	"name": "anstech-fuelphp/vite",
 	"description" : "FuelPHP 1.x Vite Package",
 	"type": "fuel-package",
 	"homepage": "https://github.com/anstokes/fuelphp-vite-react",
