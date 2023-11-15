@@ -1,26 +1,54 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
 // import react from '@vitejs/plugin-react-swc'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react';
 
 // Live reload support
-import liveReload from 'vite-plugin-live-reload'
+import liveReload from 'vite-plugin-live-reload';
 
-// Path
-import path from 'path'
+// Node Path
+import path from 'node:path';
+
+// Glob
+// @see https://github.com/mrmlnc/fast-glob
+import fg from 'fast-glob';
+
+// Directory paths for consistency with FuelPHP
+import { APPPATH, DOCROOT, SOURCEPATH } from './base.config';
+
+// Check if creating SSR build
+const ssr = process.env.VITE_SSR?.toLowerCase() === 'true';
+// console.log(`SSR: ${ssr ? 'ENABLED' : 'DISABLED'}`);
+
+// Paths to scan for React components
+const inDir = ssr
+  ? ['components/*.jsx', 'wrappers/*']
+  : ['client-entry-points/*.jsx'];
+
+// Output directory, based on build mode
+const outDir = ssr
+  ? path.resolve(`${SOURCEPATH}/../dist`)
+  : `${DOCROOT}/dist`;
+
+// Dynamically generate inputs
+const getInputs = () => fg
+  .globSync(inDir, {
+    cwd: SOURCEPATH,
+  })
+  .map((file) => path.resolve(SOURCEPATH, file));
 
 // https://vitejs.dev/config/
 export default defineConfig({
 
   plugins: [
-    react(),
     // Live reload pages on changes
     // @see https://github.com/arnoson/vite-plugin-live-reload#readme
     liveReload([
       // FuelPHP application directory
-      __dirname + '../../../app/**/*.php',
+      // `${APPPATH}/**/*.php`,
       // Public directory
-      __dirname + '../../../../public/**/*.php',      
+      `${DOCROOT}/**/*.php`,
     ]),
+    react(),
     splitVendorChunkPlugin(),
   ],
 
@@ -33,7 +61,7 @@ export default defineConfig({
   build: {
     // Output directory for production build
     // @see https://v2.vitejs.dev/config/#build-outdir
-    outDir: '../../../../public/dist',
+    outDir,
     emptyOutDir: true,
 
     // Emit manifest so PHP can find the hashed files
@@ -43,10 +71,22 @@ export default defineConfig({
     // Directly customise the underlying Rollup bundle
     // @see https://v2.vitejs.dev/config/#build-rollupoptions
     rollupOptions: {
-      input: path.resolve(__dirname, 'src/main.jsx'),
-    }
+      // input: path.resolve(`${APPPATH}/react/src/main.jsx`),
+      input: getInputs(),
+      output: {
+        // Remove .client/.server from name
+        /*
+        entryFileNames: ({ name }) => {
+          const extensionRegex = new RegExp(`\\.${ssr ? 'server' : 'client'}$`);
+          const chunkName = name.replace(extensionRegex, '')
+          return `assets/${chunkName}-[hash:8].js`;
+        },
+        */
+        preserveModules: ssr,
+      },
+    },
   },
-  
+
   // Directory to serve as plain static assets (relative to root below)
   // @see https://v2.vitejs.dev/config/#publicdir
   publicDir: '../public',
@@ -55,10 +95,10 @@ export default defineConfig({
     alias: {
     },
   },
-  
+
   // Project root directory
   // @see https://vitejs.dev/config/shared-options.html#root
-  root: 'src',
+  root: SOURCEPATH,
 
   server: {
     // Specify strict port to match on PHP side
@@ -66,9 +106,9 @@ export default defineConfig({
     // @see https://v2.vitejs.dev/config/#server-port
     strictPort: true,
     port: 5133,
-    
+
     // Define the origin of the generated asset URLs during development
     // @see https://v2.vitejs.dev/config/#server-origin
-    origin: 'http://localhost:5133'
-  },  
-})
+    origin: 'http://localhost:5133',
+  },
+});
