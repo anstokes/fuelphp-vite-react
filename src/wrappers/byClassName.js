@@ -4,6 +4,7 @@ import RenderServerSide from './RenderServerSide';
 export const parameter = 'className';
 
 export function renderClient(className, Component, props, ssr) {
+  // console.log(`Looking for class name: ${className}`);
   // Render into the relevant elements
   return RenderClientElements(
     Array.from(document.getElementsByClassName(className)),

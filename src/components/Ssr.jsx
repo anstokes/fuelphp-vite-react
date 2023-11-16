@@ -25,6 +25,11 @@ App.defaultProps = {
   name: '',
 };
 
-// Define wrapper to use when building
-// export const wrapper = 'byId';
-export const wrapper = byId;
+// Export for SSR
+export const ssr = {
+  Component: App,
+  type: 'ssr',
+  // Define wrapper to use when building
+  //wrapper: 'byId',
+  wrapper: byId,
+};

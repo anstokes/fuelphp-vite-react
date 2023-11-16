@@ -4,7 +4,7 @@ import RenderServerSide from './RenderServerSide';
 export const parameter = 'id';
 
 export function renderClient(id, Component, props, ssr) {
-  console.log(`Looking for ID: ${id}`);
+  // console.log(`Looking for ID: ${id}`);
   // Render into the relevant element
   return RenderClientElements(
     [document.getElementById(id)].filter((element) => element),

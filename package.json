@@ -5,17 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env VITE_ENV=development vite",
-    "dev:ssr": "cross-env VITE_ENV=development node server",
+    "dev:ssr": "cross-env VITE_ENV=development VITE_SSR=true node server",
     "build": "vite build",
-    "build:ssr": "cross-env VITE_SSR=true vite build --ssr",
+    "build:ssr": "yarn build && cross-env VITE_SSR=true vite build --ssr",
     "lint": "eslint . --ext js,jsx",
     "preview": "vite preview",
     "server": "cross-env VITE_ENV=production node server"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

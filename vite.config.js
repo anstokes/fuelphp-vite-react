@@ -13,16 +13,19 @@ import path from 'node:path';
 import fg from 'fast-glob';
 
 // Directory paths for consistency with FuelPHP
-import { APPPATH, DOCROOT, SOURCEPATH } from './base.config';
+import { DOCROOT, SOURCEPATH } from './base.config';
 
 // Check if creating SSR build
 const ssr = process.env.VITE_SSR?.toLowerCase() === 'true';
 // console.log(`SSR: ${ssr ? 'ENABLED' : 'DISABLED'}`);
 
 // Paths to scan for React components
+/*
 const inDir = ssr
   ? ['components/*.jsx', 'wrappers/*']
   : ['client-entry-points/*.jsx'];
+*/
+const inDir = ['client-entry-points/*.jsx', 'components/*.jsx', 'wrappers/*'];
 
 // Output directory, based on build mode
 const outDir = ssr
@@ -74,17 +77,13 @@ export default defineConfig({
       // input: path.resolve(`${APPPATH}/react/src/main.jsx`),
       input: getInputs(),
       output: {
-        // Remove .client/.server from name
-        /*
-        entryFileNames: ({ name }) => {
-          const extensionRegex = new RegExp(`\\.${ssr ? 'server' : 'client'}$`);
-          const chunkName = name.replace(extensionRegex, '')
-          return `assets/${chunkName}-[hash:8].js`;
-        },
-        */
-        preserveModules: ssr,
+        // sourcemap: true,
       },
     },
+  },
+
+  esbuild: {
+    // minifyIdentifiers: false,
   },
 
   // Directory to serve as plain static assets (relative to root below)

@@ -1,7 +1,11 @@
-import SsrComponent, { wrapper as componentWrapper } from '../components/Ssr';
+import SsrComponent, { ssr } from '../components/Ssr';
+
+// Read wrapper from SSR export
+const { wrapper: componentWrapper } = ssr;
 
 // Import wrappers, only required if component defines wrapper via string
-import wrappers from '../wrappers';
+// import wrappers from '../wrappers';
+const wrappers = {};
 
 // Find wrapper and/or associated renderer
 const { renderClient: render } = (typeof (componentWrapper) === 'string')

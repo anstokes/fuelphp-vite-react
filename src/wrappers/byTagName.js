@@ -4,6 +4,7 @@ import RenderServerSide from './RenderServerSide';
 export const parameter = 'tagName';
 
 export function renderClient(tagName, Component, props, ssr) {
+  // console.log(`Looking for tag name: ${tagName}`);
   // Render into the relevant elements
   return RenderClientElements(
     Array.from(document.getElementsByTagName(tagName)),

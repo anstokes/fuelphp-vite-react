@@ -1,15 +1,20 @@
+import cors from 'cors';
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 
 // Middleware depending upon mode dev/prod
-import viteDev from './middlewares/vite.dev.js';
-import viteProd from './middlewares/vite.prod.js';
+import { middlewarePaths } from './middlewares/common.js';
+import devMiddleware from './middlewares/dev.js';
+import prodMiddleware from './middlewares/prod.js';
 
 // Check if in production mode
 const prod = (process.env.VITE_ENV?.substring(0, 4)?.toLowerCase() === 'prod');
 
 async function createServer() {
   const app = express();
+
+  // Add CORS headers, for direct browser requests
+  app.use(cors());
 
   // Support JSON request body
   app.use(express.json());
@@ -18,8 +23,8 @@ async function createServer() {
     // Production mode
     console.log('Serving content in production mode...');
 
-    // Serve SSR content
-    app.use('/ssr', viteProd);
+    // Use custom middleware to serve SSR content in production mode
+    app.use(middlewarePaths, prodMiddleware);
   } else {
     // Development mode
     console.log('Serving content in development mode...');
@@ -31,8 +36,8 @@ async function createServer() {
       // appType: 'custom'
     });
 
-    // Use custom middleware to SSR in development mode
-    app.use('/ssr', viteDev(vite));
+    // Use custom middleware to server SSR content in development mode
+    app.use(middlewarePaths, devMiddleware(vite));
 
     // Use Vite's connect instance as middleware. If you use your own
     // express router (express.Router()), you should use router.use

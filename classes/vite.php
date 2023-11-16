@@ -174,14 +174,18 @@ class Vite {
                     // Set preambled status (preamble sent)
                     $this->preambled = true;
 
-                    // Return preamble
-                    return $this->indent() . "<script type=\"module\">\n"
-                        . $this->indent(1) . "import RefreshRuntime from '{$this->host}/@react-refresh'\n"
-                        . $this->indent(1) . "RefreshRuntime.injectIntoGlobalHook(window)\n"
-                        . $this->indent(1) . "window.\$RefreshReg\$ = () => {}\n"
-                        . $this->indent(1) . "window.\$RefreshSig\$ = () => (type) => type\n"
-                        . $this->indent(1) . "window.__vite_plugin_react_preamble_installed__ = true\n"
-                        . $this->indent() . "</script>\n";
+                    // Check if development server
+                    list($response, , $info) = $this->curl("{$this->host}/@react-refresh");
+                    if ($response && ($info['http_code'] === 200)) {
+                        // Return preamble
+                        return $this->indent() . "<script type=\"module\">\n"
+                            . $this->indent(1) . "import RefreshRuntime from '{$this->host}/@react-refresh'\n"
+                            . $this->indent(1) . "RefreshRuntime.injectIntoGlobalHook(window)\n"
+                            . $this->indent(1) . "window.\$RefreshReg\$ = () => {}\n"
+                            . $this->indent(1) . "window.\$RefreshSig\$ = () => (type) => type\n"
+                            . $this->indent(1) . "window.__vite_plugin_react_preamble_installed__ = true\n"
+                            . $this->indent() . "</script>\n";
+                    }
                 }
 
             default:
@@ -295,6 +299,11 @@ class Vite {
      */
     public static function ssr(string $component, array $payload = [], array $options = [])
     {
+        // Create Vite instance, if it does not exist
+        if (!static::$instance) {
+            static::$instance = new static();
+        }
+
         // Use the Vite instance
         $vite = static::$instance;
 
@@ -331,7 +340,7 @@ class Vite {
      */
     protected static function curl(string $url, array $payload = []): array
     {
-        $ch = curl_init( $url );
+        $ch = curl_init($url);
 
         // Setup request to send JSON via POST
         if ($payload) {
